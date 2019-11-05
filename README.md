@@ -287,54 +287,70 @@
 	export default store
 
 
-## actions
+## actions 提交新状态
 
-
-	import {ADDHANDLE,DELHANDEL} from './action-types.js'
+	import {ADDHANDLE,DELHANDEL,RECIVE_COMMENT} from './action-types.js'
 	
-	// 返回一个action对象
+	// 返回一个action对象 同步 提交一个action给reducers 去新创建一个state状态
 	export const addHandle=(todo)=>({type:ADDHANDLE,data:todo})
 	
-	// 返回一个action对象
+	// 返回一个action对象 同步 提交一个action给reducers
 	export const delHandel=(index)=>({type:DELHANDEL,data:index})
-
-## reducers
-
-
-
-	import {ADDHANDLE,DELHANDEL} from './action-types.js'
+	// 同步  提交一个action给reducers 
+	const reciveComments=(initComment)=>({type:RECIVE_COMMENT,data:initComment})
 	
-	const initComment=[
-	  
-	  {name:'张三',text:'还不错'}
+	// 异步获取数据  在组件的声明周期中触发这个函数
+	export const reqComments=()=>{
+	  return dispatch=>{
+	   setTimeout(()=>{
+	    // 异步拿到数据
+	    const initComment=[
+	      {name:'张三',text:'还不错'}
+	    ]
+	    // 分发一个action
+	    dispatch(reciveComments(initComment))
 	
-	]
-	 
-	// state是老的状态  action参数是action对象  原来老的状态不能改 必须产生一个新的状态
-	// filter()过滤数组 不会改变原来的数组 返回一个新的数组
-	/*
-	action是操作当前state状态的行为
-	*/ 
-	export function comments(state=initComment,action) {
-	  // 操作initComment数据的行为
-	  switch (action.type) {
-	    case ADDHANDLE:
-	      // ...state 数据解构
-	      return [action.data,...state]
-	
-	    case DELHANDEL:
-	      // 产生的新数组就是我需要的新的状态
-	      return state.filter((todo,index)=>index!==action.data)
-	    default:
-	      return state;
-	  }
-	
+	   },1000)
 	
 	  }
+	
+	
+	}
+
+## reducers 最重要的作用就是返回一个新的状态 有多少个状态就有多少个函数
+
+		import {ADDHANDLE,DELHANDEL,RECIVE_COMMENT} from './action-types.js'
+		
+		const initComment=[]
+		 
+		// state是老的状态  action参数是action对象  原来老的状态不能改 必须产生一个新的状态
+		// filter()过滤数组 不会改变原来的数组 返回一个新的数组
+		/*
+		action是操作当前state状态的行为
+		*/ 
+		export function comments(state=initComment,action) {
+		  // 操作initComment数据的行为
+		  switch (action.type) {
+		    case ADDHANDLE:
+		      // ...state 数据解构
+		      return [action.data,...state]
+		
+		    case DELHANDEL:
+		      // 产生的新数组就是我需要的新的状态
+		      return state.filter((todo,index)=>index!==action.data)
+		    case RECIVE_COMMENT:
+		      return action.data 
+		    default:
+		      return state;
+		  }
+		
+		
+		  }
+
+## 管理多少个状态就有多少个reducer
 
 
 ## react-redux的套路 把组件拆分为ui组件和容器组件
-
 
 	import {connect} from 'react-redux'
 	import Comment from './comment.jsx'
@@ -349,22 +365,29 @@
 
 ## connect(redux)(ui组件) 把redux管理的状态专递给ui组件
 
-
 ## provide组件全局管理状态
 
+	import  React from 'react'
+	// 渲染真实DOM
+	import  ReactDOM from 'react-dom'
+	import {Provider} from 'react-redux'
+	
+	import App from './components/app/app.jsx'
+	import store from './store'
+	ReactDOM.render(
+	<Provider store={store}>
+	 <App />
+	</Provider>,
+	document.getElementById('root'))
 
-		import  React from 'react'
-		// 渲染真实DOM
-		import  ReactDOM from 'react-dom'
-		import {Provider} from 'react-redux'
-		
-		import App from './components/app/app.jsx'
-		import store from './store'
-		ReactDOM.render(
-		<Provider store={store}>
-		 <App />
-		</Provider>,
-		document.getElementById('root'))
 
- 
- 
+## 声明式编程 声明当前组件需要用到的属性
+
+	 
+	  // 声明当前组件需要用到的属性 声明式编程
+	  static propTypes={
+	    todos:PropTypes.array.isRequired,
+	    addHandle:PropTypes.func.isRequired,
+	    delHandel:PropTypes.func.isRequired,
+	    reqComments:PropTypes.func.isRequired
+	  }

@@ -2,9 +2,10 @@
 import {createStore,applyMiddleware} from 'redux'
 import thunk from 'redux-thunk'
 import {composeWithDevTools}  from 'redux-devtools-extension'
-import {comments} from './reducers'
+// reducers===>state对象
+import reducers from './reducers'
 const  store=createStore(
-  comments,
+  reducers,
   composeWithDevTools(applyMiddleware(thunk))
   
   )

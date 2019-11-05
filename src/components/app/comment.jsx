@@ -5,13 +5,17 @@ import Add from '../add/add'
 import List from '../list/list'
 class Comment extends Component {
  
-  
+  // 声明当前组件需要用到的属性 声明式编程
   static propTypes={
     todos:PropTypes.array.isRequired,
     addHandle:PropTypes.func.isRequired,
-    delHandel:PropTypes.func.isRequired
+    delHandel:PropTypes.func.isRequired,
+    reqComments:PropTypes.func.isRequired
   }
 
+  componentDidMount(){
+    this.props.reqComments()
+  }
 
   render() {
     const {todos,addHandle,delHandel} =this.props
