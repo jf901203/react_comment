@@ -269,3 +269,102 @@
 5. sort()    改变原数组 返回该数组
 6. splice()  改变原数组 返回被删除的元素
 7. unshift() 改变原来的数组 返回新数组的长度
+
+
+## redux的套路
+
+## store
+
+	import {createStore,applyMiddleware} from 'redux'
+	import thunk from 'redux-thunk'
+	import {composeWithDevTools}  from 'redux-devtools-extension'
+	import {comments} from './reducers'
+	const  store=createStore(
+	  comments,
+	  composeWithDevTools(applyMiddleware(thunk))
+	  
+	  )
+	export default store
+
+
+## actions
+
+
+	import {ADDHANDLE,DELHANDEL} from './action-types.js'
+	
+	// 返回一个action对象
+	export const addHandle=(todo)=>({type:ADDHANDLE,data:todo})
+	
+	// 返回一个action对象
+	export const delHandel=(index)=>({type:DELHANDEL,data:index})
+
+## reducers
+
+
+
+	import {ADDHANDLE,DELHANDEL} from './action-types.js'
+	
+	const initComment=[
+	  
+	  {name:'张三',text:'还不错'}
+	
+	]
+	 
+	// state是老的状态  action参数是action对象  原来老的状态不能改 必须产生一个新的状态
+	// filter()过滤数组 不会改变原来的数组 返回一个新的数组
+	/*
+	action是操作当前state状态的行为
+	*/ 
+	export function comments(state=initComment,action) {
+	  // 操作initComment数据的行为
+	  switch (action.type) {
+	    case ADDHANDLE:
+	      // ...state 数据解构
+	      return [action.data,...state]
+	
+	    case DELHANDEL:
+	      // 产生的新数组就是我需要的新的状态
+	      return state.filter((todo,index)=>index!==action.data)
+	    default:
+	      return state;
+	  }
+	
+	
+	  }
+
+
+## react-redux的套路 把组件拆分为ui组件和容器组件
+
+
+	import {connect} from 'react-redux'
+	import Comment from './comment.jsx'
+	import {addHandle,delHandel} from '../../store/actions'
+	import './app.css'
+	
+	// 把一般属性和函数属性传递给Comment UI组件
+	export default connect(state=>({
+	  todos:state
+	}),{addHandle,delHandel})(Comment)
+
+
+## connect(redux)(ui组件) 把redux管理的状态专递给ui组件
+
+
+## provide组件全局管理状态
+
+
+		import  React from 'react'
+		// 渲染真实DOM
+		import  ReactDOM from 'react-dom'
+		import {Provider} from 'react-redux'
+		
+		import App from './components/app/app.jsx'
+		import store from './store'
+		ReactDOM.render(
+		<Provider store={store}>
+		 <App />
+		</Provider>,
+		document.getElementById('root'))
+
+ 
+ 

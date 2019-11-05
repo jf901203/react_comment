@@ -1,7 +1,8 @@
-
-import {React} from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
+import Add from '../add/add'
+import List from '../list/list'
 class Comment extends Component {
  
   
